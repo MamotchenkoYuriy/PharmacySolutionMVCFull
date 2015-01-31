@@ -1,0 +1,32 @@
+﻿@using GridMvc;
+@using GridMvc.Html
+@model IEnumerable<PharmacySolution.Web.Core.Models.PharmacyViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Pharmacies</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", new {}, new { @class = " btn btn-default" })
+</p>
+
+@Html.Grid(Model).Columns(columns =>
+{
+    columns.Add(foo => foo.Id).Titled("Id").SetWidth("5%").Sortable(true);
+    columns.Add(foo => foo.Number).Titled("Number").SetWidth("20%").Sortable(true);
+    columns.Add(foo => foo.Address).Titled("Address").SetWidth("30%").Sortable(true);
+    columns.Add(foo => foo.PhoneNumber).Titled("PhoneNumber").SetWidth("20%").Sortable(true);
+    columns.Add().Titled("").Encoded(false).Sanitized(false).RenderValueAs(m => @<b>
+                @Html.ActionLink("Edit", "Edit", new { id = m.Id },
+                    new { @class = " btn btn-primary" })
+
+                @Html.ActionLink("Details", "Details", new { id = m.Id },
+                    new { @class = " btn btn-default" })
+
+                @Html.ActionLink("Delete", "Delete", new { id = m.Id },
+                    new { @class = " btn btn-danger" })
+            </b>).SetWidth("20%");
+           }).WithPaging(20)

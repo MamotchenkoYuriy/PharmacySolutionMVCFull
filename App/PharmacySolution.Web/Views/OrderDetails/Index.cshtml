@@ -1,0 +1,53 @@
+﻿@using GridMvc.Html
+@model IEnumerable<PharmacySolution.Web.Core.Models.OrderDetailsListViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<h2>OrderDetailses</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create",new {}, new { @class = "btn btn-success" })
+</p>
+<p>
+    @Html.Label("Select order number to view order details")
+</p>
+@Html.DropDownList("Orders", ViewBag.Medicaments as List<SelectListItem>, new { style = "width:250px", @class = "dropdown form-control ", @id = "drop-down-list" })
+<div id="table-to-change">
+@Html.Grid(Model).Columns(columns =>
+{
+    columns.Add(foo => foo.OrderId).Titled("OrderId").SetWidth("5%").Sortable(true);
+    columns.Add(foo => foo.MedicamentName).Titled("MedicamentName").SetWidth("30%").Sortable(true);
+    columns.Add(foo => foo.Count).Titled("Count").SetWidth("20%").Sortable(true);
+    columns.Add(foo => foo.UnitPrice).Titled("UnitPrice").SetWidth("20%").Sortable(true);
+    columns.Add().Titled("").Encoded(false).Sanitized(false).RenderValueAs(m => @<b>
+        @Html.ActionLink("Edit", "Edit", new { medicamentId = m.MedicamentId, orderId = m.OrderId },
+                    new { @class = " btn btn-primary" })
+
+        @Html.ActionLink("Details", "Details", new { medicamentId = m.MedicamentId, orderId = m.OrderId },
+                    new { @class = " btn btn-default" })
+
+        @Html.ActionLink("Delete", "Delete", new { medicamentId = m.MedicamentId, orderId = m.OrderId },
+                    new { @class = " btn btn-danger" })
+    </b>).SetWidth("20%");
+}).WithPaging(5)
+</div>
+<script>
+    $(document).ready(function () {
+        $("#drop-down-list").change(function () {
+            $.ajax({
+                method: "Get",
+                url: "/OrderDetails/GetTablePartialView",
+                data: "id=" + $("#drop-down-list").val(),
+                success: function (data) {
+                    $("#table-to-change").html(data);
+                },
+                error: function () {
+                    alert("Ошибка установки значения :-(((");
+                }
+            });
+        });
+    })
+</script>

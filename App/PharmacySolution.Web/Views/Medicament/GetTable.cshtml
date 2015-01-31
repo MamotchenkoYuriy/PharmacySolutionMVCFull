@@ -1,0 +1,19 @@
+﻿@using GridMvc.Html
+@model IEnumerable<PharmacySolution.Web.Core.Models.MedicamentViewModel>
+@Html.Grid(Model).Columns(columns =>
+{
+    columns.Add(foo => foo.Name).Titled("Number").SetWidth("15%").Sortable(true);
+    columns.Add(foo => foo.SerialNumber).Titled("Address").SetWidth("15%").Sortable(true);
+    columns.Add(foo => foo.Description).Titled("PhoneNumber").SetWidth("40%").Sortable(true);
+    columns.Add(foo => foo.Price).Titled("PhoneNumber").SetWidth("10%").Sortable(true);
+    columns.Add().Titled("").Encoded(false).Sanitized(false).RenderValueAs(m => @<b>
+        @Html.ActionLink("Edit", "Edit", new { id = m.Id },
+                    new { @class = " btn btn-primary" })
+
+        @Html.ActionLink("Details", "Details", new { id = m.Id },
+                    new { @class = " btn btn-default" })
+
+        @Html.ActionLink("Delete", "Delete", new { id = m.Id },
+                    new { @class = " btn btn-danger" })
+    </b>).SetWidth("20%");
+}).WithPaging(5)

@@ -1,0 +1,49 @@
+﻿@using GridMvc.Html
+@model IEnumerable<PharmacySolution.Web.Core.Models.StorageViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Storage</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", new { }, new { @class = " btn btn-default" })
+</p>
+@Html.DropDownList("Pharmacy", ViewBag.Pharmacies as List<SelectListItem>, new { style = "width:250px", @class = "dropdown form-control", @id = "drop-down-list" })
+<div id="table-to-change">
+    @Html.Grid(Model).Columns(columns =>
+{
+    columns.Add(foo => foo.PharmacyNumber).Titled("OrderId").SetWidth("20%").Sortable(true);
+    columns.Add(foo => foo.MedicamentName).Titled("MedicamentName").SetWidth("30%").Sortable(true);
+    columns.Add(foo => foo.Count).Titled("Count").SetWidth("20%").Sortable(true);
+    columns.Add().Titled("").Encoded(false).Sanitized(false).RenderValueAs(m => @<b>
+        @Html.ActionLink("Edit", "Edit", new { medicamentId = m.MedicamentId, pharmacyId = m.PharmacyId },
+                    new { @class = " btn btn-primary" })
+
+        @Html.ActionLink("Details", "Details", new { medicamentId = m.MedicamentId, pharmacyId = m.PharmacyId },
+                    new { @class = " btn btn-default" })
+
+        @Html.ActionLink("Delete", "Delete", new { medicamentId = m.MedicamentId, pharmacyId = m.PharmacyId },
+                    new { @class = " btn btn-danger" })
+    </b>).SetWidth("30%");
+}).WithPaging(5)
+</div>
+<script>
+    $(document).ready(function () {
+        $("#drop-down-list").change(function () {
+            $.ajax({
+                method: "Get",
+                url: "/Storage/GetTable",
+                data: "id=" + $("#drop-down-list").val(),
+                success: function (data) {
+                    $("#table-to-change").html(data);
+                },
+                error: function () {
+                    alert("Ошибка установки значения :-(((");
+                }
+            });
+        });
+    })
+</script>
